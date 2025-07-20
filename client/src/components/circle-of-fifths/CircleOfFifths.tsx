@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { AppState } from "@/pages/circle-of-fifths";
 import GeometricShapeDrawer from "./GeometricShapeDrawer";
-import ScaleVisualizer from "./ScaleVisualizer";
+import ScaleVisualizer from "./ScaleVisualizerNew";
 
 interface CircleOfFifthsProps {
   state: AppState;
