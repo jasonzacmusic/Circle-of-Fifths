@@ -28,21 +28,18 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
     
     if (rootIndex === -1) return;
 
-    // Draw double circle around root note
+    // Draw double GREEN circles around root note (like in the drawing)
     drawDoubleCircleAroundRoot(svg, rootIndex);
 
-    // Get the neighbors in circle of fifths positions
-    // Previous note (counter-clockwise) and next note (clockwise)
-    const prevIndex = (rootIndex - 1 + CIRCLE_NOTES.length) % CIRCLE_NOTES.length;
-    const nextIndex = (rootIndex + 1) % CIRCLE_NOTES.length;
+    // Get the 4th and 5th in circle of fifths positions (F-Bb-Eb as in drawing)
+    // 4th is one position counter-clockwise, 5th is one position clockwise
+    const fourthIndex = (rootIndex - 1 + CIRCLE_NOTES.length) % CIRCLE_NOTES.length; // F (P4)
+    const fifthIndex = (rootIndex + 1) % CIRCLE_NOTES.length; // Eb (P5)
 
-    // Draw arc connecting the three neighbors (Prev Root Next)
-    drawScaleArc(svg, [prevIndex, rootIndex, nextIndex]);
-    
-    // Highlight the three neighbor notes
-    highlightNeighborNotes(svg, [prevIndex, rootIndex, nextIndex]);
+    // Draw BLUE curved line connecting F-Bb-Eb (4th-root-5th)
+    drawScaleArc(svg, [fourthIndex, rootIndex, fifthIndex]);
 
-    // Draw dotted arc for remaining notes
+    // Draw dotted GREEN arcs for remaining scale notes (D, A, G, C)
     drawRemainingNotesArc(svg, rootIndex);
 
   }, [selectedNotes, currentMode, scaleType]);
@@ -82,29 +79,27 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
   const drawDoubleCircleAroundRoot = (svg: SVGSVGElement, rootIndex: number) => {
     const position = getNotePosition(rootIndex);
     
-    // Outer circle - larger and more visible
+    // Outer GREEN circle - like in the drawing
     const outerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     outerCircle.setAttribute('cx', position.x.toString());
     outerCircle.setAttribute('cy', position.y.toString());
     outerCircle.setAttribute('r', '45');
     outerCircle.setAttribute('fill', 'none');
-    outerCircle.setAttribute('stroke', '#f97316');
+    outerCircle.setAttribute('stroke', '#16a34a');
     outerCircle.setAttribute('stroke-width', '4');
     outerCircle.setAttribute('opacity', '0.9');
-    outerCircle.setAttribute('stroke-dasharray', '8,4');
     outerCircle.classList.add('scale-element');
     svg.appendChild(outerCircle);
 
-    // Inner circle
+    // Inner GREEN circle
     const innerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     innerCircle.setAttribute('cx', position.x.toString());
     innerCircle.setAttribute('cy', position.y.toString());
     innerCircle.setAttribute('r', '38');
     innerCircle.setAttribute('fill', 'none');
-    innerCircle.setAttribute('stroke', '#f97316');
+    innerCircle.setAttribute('stroke', '#16a34a');
     innerCircle.setAttribute('stroke-width', '3');
     innerCircle.setAttribute('opacity', '0.7');
-    innerCircle.setAttribute('stroke-dasharray', '6,3');
     innerCircle.classList.add('scale-element');
     svg.appendChild(innerCircle);
   };
@@ -134,9 +129,9 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
     const arcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     arcPath.setAttribute('d', pathData);
     arcPath.setAttribute('fill', 'none');
-    arcPath.setAttribute('stroke', '#16a34a');
+    arcPath.setAttribute('stroke', '#2563eb'); // BLUE like in the drawing
     arcPath.setAttribute('stroke-width', '4');
-    arcPath.setAttribute('opacity', '0.7');
+    arcPath.setAttribute('opacity', '0.8');
     arcPath.setAttribute('stroke-linecap', 'round');
     arcPath.classList.add('scale-element');
     svg.appendChild(arcPath);
@@ -225,15 +220,15 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
     const dottedArcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     dottedArcPath.setAttribute('d', pathData);
     dottedArcPath.setAttribute('fill', 'none');
-    dottedArcPath.setAttribute('stroke', '#dc2626');
+    dottedArcPath.setAttribute('stroke', '#16a34a'); // GREEN like in the drawing
     dottedArcPath.setAttribute('stroke-width', '3');
     dottedArcPath.setAttribute('stroke-dasharray', '8,4');
-    dottedArcPath.setAttribute('opacity', '0.6');
+    dottedArcPath.setAttribute('opacity', '0.7');
     dottedArcPath.setAttribute('stroke-linecap', 'round');
     dottedArcPath.classList.add('scale-element');
     svg.appendChild(dottedArcPath);
 
-    // Add small dotted circles at note positions
+    // Add small dotted circles at note positions - GREEN
     remainingIndices.forEach((index) => {
       const position = getNotePosition(index);
       const dottedCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -241,7 +236,7 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
       dottedCircle.setAttribute('cy', position.y.toString());
       dottedCircle.setAttribute('r', '4');
       dottedCircle.setAttribute('fill', 'none');
-      dottedCircle.setAttribute('stroke', '#dc2626');
+      dottedCircle.setAttribute('stroke', '#16a34a'); // GREEN like in the drawing
       dottedCircle.setAttribute('stroke-width', '2');
       dottedCircle.setAttribute('stroke-dasharray', '4,2');
       dottedCircle.setAttribute('opacity', '0.8');
