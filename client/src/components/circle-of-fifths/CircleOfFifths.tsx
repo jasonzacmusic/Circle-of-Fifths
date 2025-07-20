@@ -72,7 +72,7 @@ export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProp
     
     // Major scale intervals: W-W-H-W-W-W-H (2-2-1-2-2-2-1 semitones)
     const majorScaleIntervals = [0, 2, 4, 5, 7, 9, 11]; // Root, 2nd, 3rd, 4th, 5th, 6th, 7th
-    const scaleDegrees = ['1', '2', '3', '4', '5', '6', '7'];
+    const scaleDegrees = ['Root', 'M2', 'M3', 'P4', 'P5', 'M6', 'M7'];
     
     // Convert root note to chromatic index
     const chromaticNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
