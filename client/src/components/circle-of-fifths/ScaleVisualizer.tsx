@@ -116,47 +116,57 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
   };
 
   const drawRemainingNotesArc = (svg: SVGSVGElement, rootIndex: number) => {
-    // Get the remaining notes in the scale (C G D A for Bb major example)
-    // These are typically 4 consecutive notes in the circle, excluding the root's immediate neighbors
+    // For Bb major example: remaining notes are C G D A (indices 0, 1, 2, 3)
+    // These are all notes EXCEPT the root (Bb = index 10) and its neighbors (F = 11, Eb = 9)
     const remainingIndices = [];
     
-    // Start from 4 positions away from root and take 4 consecutive notes
-    const startIndex = (rootIndex + 4) % CIRCLE_NOTES.length;
-    for (let i = 0; i < 4; i++) {
-      remainingIndices.push((startIndex + i) % CIRCLE_NOTES.length);
+    for (let i = 0; i < CIRCLE_NOTES.length; i++) {
+      // Skip the root and its immediate neighbors
+      const prevIndex = (rootIndex - 1 + CIRCLE_NOTES.length) % CIRCLE_NOTES.length;
+      const nextIndex = (rootIndex + 1) % CIRCLE_NOTES.length;
+      
+      if (i !== rootIndex && i !== prevIndex && i !== nextIndex) {
+        remainingIndices.push(i);
+      }
     }
 
+    if (remainingIndices.length === 0) return;
+
+    // Sort indices to create a smooth arc
+    remainingIndices.sort((a, b) => a - b);
+    
     const positions = remainingIndices.map(index => getNotePosition(index));
     
-    // Create a dotted arc path connecting these notes
-    const pathPoints = positions.map((pos, index) => {
-      if (index === 0) return `M ${pos.x},${pos.y}`;
-      if (index === 1) return `L ${pos.x},${pos.y}`;
-      if (index === 2) return `L ${pos.x},${pos.y}`;
-      return `L ${pos.x},${pos.y}`;
-    }).join(' ');
-    
-    const dottedArcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    dottedArcPath.setAttribute('d', pathPoints);
-    dottedArcPath.setAttribute('fill', 'none');
-    dottedArcPath.setAttribute('stroke', '#dc2626');
-    dottedArcPath.setAttribute('stroke-width', '3');
-    dottedArcPath.setAttribute('stroke-dasharray', '8,4');
-    dottedArcPath.setAttribute('opacity', '0.6');
-    dottedArcPath.setAttribute('stroke-linecap', 'round');
-    dottedArcPath.classList.add('scale-element');
-    svg.appendChild(dottedArcPath);
+    // Create curved path through these points
+    if (positions.length > 1) {
+      let pathData = `M ${positions[0].x},${positions[0].y}`;
+      
+      for (let i = 1; i < positions.length; i++) {
+        pathData += ` L ${positions[i].x},${positions[i].y}`;
+      }
+      
+      const dottedArcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      dottedArcPath.setAttribute('d', pathData);
+      dottedArcPath.setAttribute('fill', 'none');
+      dottedArcPath.setAttribute('stroke', '#dc2626');
+      dottedArcPath.setAttribute('stroke-width', '3');
+      dottedArcPath.setAttribute('stroke-dasharray', '8,4');
+      dottedArcPath.setAttribute('opacity', '0.6');
+      dottedArcPath.setAttribute('stroke-linecap', 'round');
+      dottedArcPath.classList.add('scale-element');
+      svg.appendChild(dottedArcPath);
+    }
 
     // Add small dotted circles at these positions
     positions.forEach((position) => {
       const dottedCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       dottedCircle.setAttribute('cx', position.x.toString());
       dottedCircle.setAttribute('cy', position.y.toString());
-      dottedCircle.setAttribute('r', '3');
+      dottedCircle.setAttribute('r', '4');
       dottedCircle.setAttribute('fill', 'none');
       dottedCircle.setAttribute('stroke', '#dc2626');
       dottedCircle.setAttribute('stroke-width', '2');
-      dottedCircle.setAttribute('stroke-dasharray', '3,2');
+      dottedCircle.setAttribute('stroke-dasharray', '4,2');
       dottedCircle.setAttribute('opacity', '0.8');
       dottedCircle.classList.add('scale-element');
       svg.appendChild(dottedCircle);
