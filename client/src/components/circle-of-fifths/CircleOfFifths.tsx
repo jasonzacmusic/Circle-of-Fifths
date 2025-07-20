@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AppState } from "@/pages/circle-of-fifths";
 import GeometricShapeDrawer from "./GeometricShapeDrawer";
+import ScaleVisualizer from "./ScaleVisualizer";
 
 interface CircleOfFifthsProps {
   state: AppState;
@@ -23,8 +24,6 @@ const NOTE_POSITIONS = [
   { left: '25%', top: '6.7%', transform: 'translate(-50%, -50%)' },   // F - 11 o'clock
 ];
 
-const BLACK_NOTES = ['F#', 'Db', 'Ab', 'Eb', 'Bb'];
-
 export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProps) {
   const { selectedNotes, scaleType, currentMode } = state;
 
@@ -40,13 +39,9 @@ export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProp
     return () => document.removeEventListener('keydown', handleKeydown);
   }, []);
 
-  const getNoteLabel = (note: string, index: number) => {
-    if (!BLACK_NOTES.includes(note)) return note;
-    
+  const getNoteLabel = (note: string) => {
     // Handle enharmonic equivalents based on scale type
-    if (scaleType === 'major') {
-      return note; // F# Db Ab Eb Bb
-    } else {
+    if (scaleType === 'minor') {
       // Minor scale spelling: F# C# G# D# Bb
       switch (note) {
         case 'Db': return 'C#';
@@ -55,6 +50,7 @@ export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProp
         default: return note;
       }
     }
+    return note; // Major scale spelling: F# Db Ab Eb Bb
   };
 
   const isNoteSelected = (note: string) => {
@@ -75,6 +71,13 @@ export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProp
         {/* Circle container */}
         <div className="absolute inset-0 rounded-full border-4 border-neutral-200">
           
+          {/* SVG for scale visualization */}
+          <ScaleVisualizer
+            selectedNotes={selectedNotes}
+            currentMode={currentMode}
+            scaleType={scaleType}
+          />
+
           {/* SVG for geometric shapes */}
           <GeometricShapeDrawer
             selectedNotes={selectedNotes}
@@ -85,9 +88,8 @@ export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProp
           {/* Note positions */}
           {CIRCLE_NOTES.map((note, index) => {
             const position = NOTE_POSITIONS[index];
-            const isBlackNote = BLACK_NOTES.includes(note);
             const isSelected = isNoteSelected(note);
-            const displayNote = getNoteLabel(note, index);
+            const displayNote = getNoteLabel(note);
 
             return (
               <div
@@ -99,19 +101,13 @@ export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProp
                 <div
                   className={`w-full h-full rounded-full flex items-center justify-center shadow-sm transition-all ${
                     isSelected
-                      ? 'border-2 border-primary bg-primary text-white'
-                      : isBlackNote
-                      ? 'bg-neutral-800 border-2 border-neutral-600 hover:border-primary hover:shadow-md'
-                      : 'bg-white border-2 border-neutral-300 hover:border-primary hover:shadow-md'
+                      ? 'border-3 border-primary bg-primary text-white shadow-lg'
+                      : 'bg-white border-2 border-neutral-300 text-neutral-700 hover:border-primary hover:shadow-md hover:scale-105'
                   }`}
                 >
                   <span
                     className={`text-sm font-semibold ${
-                      isSelected
-                        ? 'text-white'
-                        : isBlackNote
-                        ? 'text-white'
-                        : 'text-neutral-700'
+                      isSelected ? 'text-white' : 'text-neutral-700'
                     }`}
                   >
                     {displayNote}
