@@ -142,19 +142,31 @@ export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProp
             return (
               <div
                 key={note}
-                className="note-position absolute w-16 h-16 -ml-8 -mt-8 cursor-pointer transition-all duration-200 hover:scale-110 hover:z-10"
-                style={position}
-                onClick={() => selectNote(note)}
+                className="note-position absolute cursor-pointer transition-all duration-200 hover:scale-110 z-20"
+                style={{
+                  ...position,
+                  width: '64px',
+                  height: '64px',
+                  marginLeft: '-32px',
+                  marginTop: '-32px',
+                  pointerEvents: 'auto'
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  selectNote(note);
+                }}
               >
                 <div
-                  className={`w-full h-full rounded-full flex items-center justify-center shadow-sm transition-all relative z-10 ${
+                  className={`w-full h-full rounded-full flex items-center justify-center shadow-sm transition-all relative ${
                     isSelected
-                      ? 'border-3 border-primary bg-primary text-white shadow-lg'
+                      ? 'border-3 border-primary bg-primary text-white shadow-lg scale-105'
                       : 'bg-white border-2 border-neutral-300 text-neutral-700 hover:border-primary hover:shadow-lg hover:scale-105 hover:bg-neutral-50'
                   }`}
+                  style={{ pointerEvents: 'auto' }}
                 >
                   <span
-                    className={`text-sm font-semibold ${
+                    className={`text-sm font-semibold pointer-events-none select-none ${
                       isSelected ? 'text-white' : 'text-neutral-700'
                     }`}
                   >

@@ -31,13 +31,16 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
     // Draw double circle around root note
     drawDoubleCircleAroundRoot(svg, rootIndex);
 
-    // Get the 4th and 5th of the scale in circle of fifths positions
-    // 4th is one position counter-clockwise, 5th is one position clockwise
-    const fourthIndex = (rootIndex - 1 + CIRCLE_NOTES.length) % CIRCLE_NOTES.length; // P4
-    const fifthIndex = (rootIndex + 1) % CIRCLE_NOTES.length; // P5
+    // Get the neighbors in circle of fifths positions
+    // Previous note (counter-clockwise) and next note (clockwise)
+    const prevIndex = (rootIndex - 1 + CIRCLE_NOTES.length) % CIRCLE_NOTES.length;
+    const nextIndex = (rootIndex + 1) % CIRCLE_NOTES.length;
 
-    // Draw arc connecting root, 4th, and 5th (P4 Root P5)
-    drawScaleArc(svg, [fourthIndex, rootIndex, fifthIndex]);
+    // Draw arc connecting the three neighbors (Prev Root Next)
+    drawScaleArc(svg, [prevIndex, rootIndex, nextIndex]);
+    
+    // Highlight the three neighbor notes
+    highlightNeighborNotes(svg, [prevIndex, rootIndex, nextIndex]);
 
     // Draw dotted arc for remaining notes
     drawRemainingNotesArc(svg, rootIndex);
@@ -55,6 +58,25 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
       x: centerX + radius * Math.cos(radian),
       y: centerY + radius * Math.sin(radian)
     };
+  };
+
+  const highlightNeighborNotes = (svg: SVGSVGElement, noteIndices: number[]) => {
+    noteIndices.forEach((index) => {
+      const position = getNotePosition(index);
+      
+      // Create a subtle highlight ring around each neighbor note
+      const highlightRing = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      highlightRing.setAttribute('cx', position.x.toString());
+      highlightRing.setAttribute('cy', position.y.toString());
+      highlightRing.setAttribute('r', '32');
+      highlightRing.setAttribute('fill', 'none');
+      highlightRing.setAttribute('stroke', '#16a34a');
+      highlightRing.setAttribute('stroke-width', '3');
+      highlightRing.setAttribute('opacity', '0.6');
+      highlightRing.setAttribute('stroke-dasharray', '4,2');
+      highlightRing.classList.add('scale-element');
+      svg.appendChild(highlightRing);
+    });
   };
 
   const drawDoubleCircleAroundRoot = (svg: SVGSVGElement, rootIndex: number) => {
@@ -231,8 +253,9 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
   return (
     <svg
       ref={svgRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
+      className="absolute inset-0 w-full h-full pointer-events-none z-0"
       viewBox="0 0 400 400"
+      style={{ pointerEvents: 'none' }}
     >
       <defs>
         <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
