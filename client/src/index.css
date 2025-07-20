@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(25, 95%, 53%);
+  --secondary-foreground: hsl(60, 9.1%, 97.8%);
+  --accent: hsl(142, 76%, 36%);
+  --accent-foreground: hsl(60, 9.1%, 97.8%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* Neutral color palette matching design */
+  --neutral-50: hsl(210, 40%, 98%);
+  --neutral-100: hsl(210, 40%, 96%);
+  --neutral-200: hsl(214, 32%, 91%);
+  --neutral-300: hsl(213, 27%, 84%);
+  --neutral-400: hsl(215, 20%, 65%);
+  --neutral-500: hsl(215, 16%, 47%);
+  --neutral-600: hsl(215, 19%, 35%);
+  --neutral-700: hsl(215, 25%, 27%);
+  --neutral-800: hsl(217, 33%, 17%);
+  --neutral-900: hsl(222, 84%, 5%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Custom utility classes for the Circle of Fifths */
+@layer utilities {
+  .font-inter {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  .text-neutral-50 { color: var(--neutral-50); }
+  .text-neutral-100 { color: var(--neutral-100); }
+  .text-neutral-200 { color: var(--neutral-200); }
+  .text-neutral-300 { color: var(--neutral-300); }
+  .text-neutral-400 { color: var(--neutral-400); }
+  .text-neutral-500 { color: var(--neutral-500); }
+  .text-neutral-600 { color: var(--neutral-600); }
+  .text-neutral-700 { color: var(--neutral-700); }
+  .text-neutral-800 { color: var(--neutral-800); }
+  .text-neutral-900 { color: var(--neutral-900); }
+  
+  .bg-neutral-50 { background-color: var(--neutral-50); }
+  .bg-neutral-100 { background-color: var(--neutral-100); }
+  .bg-neutral-200 { background-color: var(--neutral-200); }
+  .bg-neutral-300 { background-color: var(--neutral-300); }
+  .bg-neutral-400 { background-color: var(--neutral-400); }
+  .bg-neutral-500 { background-color: var(--neutral-500); }
+  .bg-neutral-600 { background-color: var(--neutral-600); }
+  .bg-neutral-700 { background-color: var(--neutral-700); }
+  .bg-neutral-800 { background-color: var(--neutral-800); }
+  .bg-neutral-900 { background-color: var(--neutral-900); }
+  
+  .border-neutral-200 { border-color: var(--neutral-200); }
+  .border-neutral-300 { border-color: var(--neutral-300); }
+  .border-neutral-600 { border-color: var(--neutral-600); }
+  
+  .hover\:bg-neutral-200:hover { background-color: var(--neutral-200); }
+  .hover\:text-neutral-900:hover { color: var(--neutral-900); }
+  .hover\:border-primary:hover { border-color: var(--primary); }
+  .hover\:shadow-md:hover { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+}
+
+/* FontAwesome icons support */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+/* Audio visualization styles */
+.audio-visualizer {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.note-position {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.note-position:hover {
+  transform: scale(1.1);
+}
+
+/* Geometric shapes styling */
+.shape-path {
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-track {
+  background: var(--neutral-200);
+  height: 8px;
+  border-radius: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: var(--primary);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-moz-range-track {
+  background: var(--neutral-200);
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+  background: var(--primary);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
