@@ -88,9 +88,23 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
     if (noteIndices.length !== 3) return;
 
     const positions = noteIndices.map(index => getNotePosition(index));
+    const centerX = 200, centerY = 200;
     
-    // Create a smooth arc path connecting the three notes
-    const pathData = `M ${positions[0].x},${positions[0].y} Q ${positions[1].x},${positions[1].y} ${positions[2].x},${positions[2].y}`;
+    // Create a curved arc around the three notes (root + neighbors)
+    // Calculate the arc that encompasses these three points
+    const radius = 180; // Slightly larger than note positions
+    const avgAngle = noteIndices.reduce((sum, index) => sum + (index * 30 - 90), 0) / 3;
+    const startAngle = (noteIndices[0] * 30 - 90 - 20) * Math.PI / 180;
+    const endAngle = (noteIndices[2] * 30 - 90 + 20) * Math.PI / 180;
+    
+    const startX = centerX + radius * Math.cos(startAngle);
+    const startY = centerY + radius * Math.sin(startAngle);
+    const endX = centerX + radius * Math.cos(endAngle);
+    const endY = centerY + radius * Math.sin(endAngle);
+    
+    // Create curved path
+    const largeArcFlag = Math.abs(endAngle - startAngle) > Math.PI ? 1 : 0;
+    const pathData = `M ${startX},${startY} A ${radius},${radius} 0 ${largeArcFlag},1 ${endX},${endY}`;
     
     const arcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     arcPath.setAttribute('d', pathData);
@@ -102,7 +116,7 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
     arcPath.classList.add('scale-element');
     svg.appendChild(arcPath);
 
-    // Add small circles at connection points
+    // Add small circles at note positions
     positions.forEach((position, index) => {
       const connectionCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       connectionCircle.setAttribute('cx', position.x.toString());
@@ -116,49 +130,47 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
   };
 
   const drawRemainingNotesArc = (svg: SVGSVGElement, rootIndex: number) => {
-    // For Bb major example: remaining notes are C G D A (indices 0, 1, 2, 3)
-    // These are all notes EXCEPT the root (Bb = index 10) and its neighbors (F = 11, Eb = 9)
-    const remainingIndices = [];
+    // For Bb major scale, the remaining scale notes are: C G D A
+    // These correspond to indices 0, 1, 2, 3 in the circle
+    const scaleNotes = ['C', 'G', 'D', 'A']; // Major scale notes excluding root and its neighbors
+    const remainingIndices = scaleNotes.map(note => CIRCLE_NOTES.indexOf(note)).filter(index => index !== -1);
     
-    for (let i = 0; i < CIRCLE_NOTES.length; i++) {
-      // Skip the root and its immediate neighbors
-      const prevIndex = (rootIndex - 1 + CIRCLE_NOTES.length) % CIRCLE_NOTES.length;
-      const nextIndex = (rootIndex + 1) % CIRCLE_NOTES.length;
-      
-      if (i !== rootIndex && i !== prevIndex && i !== nextIndex) {
-        remainingIndices.push(i);
-      }
-    }
-
     if (remainingIndices.length === 0) return;
 
     // Sort indices to create a smooth arc
     remainingIndices.sort((a, b) => a - b);
     
-    const positions = remainingIndices.map(index => getNotePosition(index));
+    const centerX = 200, centerY = 200;
+    const radius = 190; // Larger radius than the main grouping
     
-    // Create curved path through these points
-    if (positions.length > 1) {
-      let pathData = `M ${positions[0].x},${positions[0].y}`;
-      
-      for (let i = 1; i < positions.length; i++) {
-        pathData += ` L ${positions[i].x},${positions[i].y}`;
-      }
-      
-      const dottedArcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      dottedArcPath.setAttribute('d', pathData);
-      dottedArcPath.setAttribute('fill', 'none');
-      dottedArcPath.setAttribute('stroke', '#dc2626');
-      dottedArcPath.setAttribute('stroke-width', '3');
-      dottedArcPath.setAttribute('stroke-dasharray', '8,4');
-      dottedArcPath.setAttribute('opacity', '0.6');
-      dottedArcPath.setAttribute('stroke-linecap', 'round');
-      dottedArcPath.classList.add('scale-element');
-      svg.appendChild(dottedArcPath);
-    }
+    // Calculate start and end angles for the arc
+    const angles = remainingIndices.map(index => index * 30 - 90); // Convert to degrees
+    const startAngle = (angles[0] - 15) * Math.PI / 180; // Add padding
+    const endAngle = (angles[angles.length - 1] + 15) * Math.PI / 180;
+    
+    const startX = centerX + radius * Math.cos(startAngle);
+    const startY = centerY + radius * Math.sin(startAngle);
+    const endX = centerX + radius * Math.cos(endAngle);
+    const endY = centerY + radius * Math.sin(endAngle);
+    
+    // Create curved dotted arc
+    const largeArcFlag = Math.abs(endAngle - startAngle) > Math.PI ? 1 : 0;
+    const pathData = `M ${startX},${startY} A ${radius},${radius} 0 ${largeArcFlag},1 ${endX},${endY}`;
+    
+    const dottedArcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    dottedArcPath.setAttribute('d', pathData);
+    dottedArcPath.setAttribute('fill', 'none');
+    dottedArcPath.setAttribute('stroke', '#dc2626');
+    dottedArcPath.setAttribute('stroke-width', '3');
+    dottedArcPath.setAttribute('stroke-dasharray', '8,4');
+    dottedArcPath.setAttribute('opacity', '0.6');
+    dottedArcPath.setAttribute('stroke-linecap', 'round');
+    dottedArcPath.classList.add('scale-element');
+    svg.appendChild(dottedArcPath);
 
-    // Add small dotted circles at these positions
-    positions.forEach((position) => {
+    // Add small dotted circles at note positions
+    remainingIndices.forEach((index) => {
+      const position = getNotePosition(index);
       const dottedCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       dottedCircle.setAttribute('cx', position.x.toString());
       dottedCircle.setAttribute('cy', position.y.toString());
