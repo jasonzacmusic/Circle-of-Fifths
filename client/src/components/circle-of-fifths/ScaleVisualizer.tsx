@@ -31,12 +31,13 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
     // Draw double circle around root note
     drawDoubleCircleAroundRoot(svg, rootIndex);
 
-    // Get neighboring notes (previous and next in circle of fifths)
-    const prevIndex = (rootIndex - 1 + CIRCLE_NOTES.length) % CIRCLE_NOTES.length;
-    const nextIndex = (rootIndex + 1) % CIRCLE_NOTES.length;
+    // Get the 4th and 5th of the scale in circle of fifths positions
+    // 4th is one position counter-clockwise, 5th is one position clockwise
+    const fourthIndex = (rootIndex - 1 + CIRCLE_NOTES.length) % CIRCLE_NOTES.length; // P4
+    const fifthIndex = (rootIndex + 1) % CIRCLE_NOTES.length; // P5
 
-    // Draw arc connecting the three notes
-    drawScaleArc(svg, [prevIndex, rootIndex, nextIndex]);
+    // Draw arc connecting root, 4th, and 5th (P4 Root P5)
+    drawScaleArc(svg, [fourthIndex, rootIndex, fifthIndex]);
 
     // Draw dotted arc for remaining notes
     drawRemainingNotesArc(svg, rootIndex);
@@ -59,15 +60,16 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
   const drawDoubleCircleAroundRoot = (svg: SVGSVGElement, rootIndex: number) => {
     const position = getNotePosition(rootIndex);
     
-    // Outer circle
+    // Outer circle - larger and more visible
     const outerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     outerCircle.setAttribute('cx', position.x.toString());
     outerCircle.setAttribute('cy', position.y.toString());
-    outerCircle.setAttribute('r', '40');
+    outerCircle.setAttribute('r', '45');
     outerCircle.setAttribute('fill', 'none');
     outerCircle.setAttribute('stroke', '#f97316');
-    outerCircle.setAttribute('stroke-width', '3');
-    outerCircle.setAttribute('opacity', '0.8');
+    outerCircle.setAttribute('stroke-width', '4');
+    outerCircle.setAttribute('opacity', '0.9');
+    outerCircle.setAttribute('stroke-dasharray', '8,4');
     outerCircle.classList.add('scale-element');
     svg.appendChild(outerCircle);
 
@@ -75,11 +77,12 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
     const innerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     innerCircle.setAttribute('cx', position.x.toString());
     innerCircle.setAttribute('cy', position.y.toString());
-    innerCircle.setAttribute('r', '35');
+    innerCircle.setAttribute('r', '38');
     innerCircle.setAttribute('fill', 'none');
     innerCircle.setAttribute('stroke', '#f97316');
-    innerCircle.setAttribute('stroke-width', '2');
-    innerCircle.setAttribute('opacity', '0.6');
+    innerCircle.setAttribute('stroke-width', '3');
+    innerCircle.setAttribute('opacity', '0.7');
+    innerCircle.setAttribute('stroke-dasharray', '6,3');
     innerCircle.classList.add('scale-element');
     svg.appendChild(innerCircle);
   };

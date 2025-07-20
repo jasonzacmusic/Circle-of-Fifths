@@ -142,15 +142,15 @@ export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProp
             return (
               <div
                 key={note}
-                className="note-position absolute w-16 h-16 -ml-8 -mt-8 cursor-pointer transition-all duration-200 hover:scale-110"
+                className="note-position absolute w-16 h-16 -ml-8 -mt-8 cursor-pointer transition-all duration-200 hover:scale-110 hover:z-10"
                 style={position}
                 onClick={() => selectNote(note)}
               >
                 <div
-                  className={`w-full h-full rounded-full flex items-center justify-center shadow-sm transition-all ${
+                  className={`w-full h-full rounded-full flex items-center justify-center shadow-sm transition-all relative z-10 ${
                     isSelected
                       ? 'border-3 border-primary bg-primary text-white shadow-lg'
-                      : 'bg-white border-2 border-neutral-300 text-neutral-700 hover:border-primary hover:shadow-md hover:scale-105'
+                      : 'bg-white border-2 border-neutral-300 text-neutral-700 hover:border-primary hover:shadow-lg hover:scale-105 hover:bg-neutral-50'
                   }`}
                 >
                   <span
