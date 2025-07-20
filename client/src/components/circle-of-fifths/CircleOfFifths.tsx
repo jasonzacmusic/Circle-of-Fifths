@@ -65,6 +65,54 @@ export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProp
     return `C ${scaleType.charAt(0).toUpperCase() + scaleType.slice(1)}`;
   };
 
+  const getMajorScaleDisplay = () => {
+    if (currentMode !== 'scales' || selectedNotes.length === 0) return null;
+    
+    const rootNote = selectedNotes[0];
+    
+    // Major scale intervals: W-W-H-W-W-W-H (2-2-1-2-2-2-1 semitones)
+    const majorScaleIntervals = [0, 2, 4, 5, 7, 9, 11]; // Root, 2nd, 3rd, 4th, 5th, 6th, 7th
+    const scaleDegrees = ['1', '2', '3', '4', '5', '6', '7'];
+    
+    // Convert root note to chromatic index
+    const chromaticNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const enharmonicMap: { [key: string]: string } = {
+      'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#'
+    };
+    
+    const normalizedRoot = enharmonicMap[rootNote] || rootNote;
+    const rootChromaticIndex = chromaticNotes.indexOf(normalizedRoot);
+    
+    // Get all major scale notes
+    const scaleNotes = majorScaleIntervals.map(interval => {
+      const chromaticIndex = (rootChromaticIndex + interval) % 12;
+      return chromaticNotes[chromaticIndex];
+    });
+    
+    // Convert back to circle of fifths notation where needed
+    const reverseMap: { [key: string]: string } = {
+      'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb'
+    };
+    
+    const displayNotes = scaleNotes.map(note => {
+      // Use circle of fifths notation for flat keys
+      if (rootNote.includes('b') && reverseMap[note]) {
+        return reverseMap[note];
+      }
+      return note;
+    });
+    
+    // Arrange in circle of fifths order: 4 1 5 2 6 3 7
+    const circleOrder = [3, 0, 4, 1, 5, 2, 6]; // Indices for 4th, root, 5th, 2nd, 6th, 3rd, 7th
+    const orderedNotes = circleOrder.map(i => displayNotes[i]);
+    const orderedDegrees = circleOrder.map(i => scaleDegrees[i]);
+    
+    return {
+      notes: orderedNotes,
+      degrees: orderedDegrees
+    };
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-8">
       <div className="relative w-full aspect-square max-w-2xl mx-auto">
@@ -148,6 +196,41 @@ export default function CircleOfFifths({ state, selectNote }: CircleOfFifthsProp
             <span className="ml-2 text-neutral-600">{getKeySignature()}</span>
           </div>
         </div>
+
+        {/* Major Scale Display - only show in scales mode */}
+        {(() => {
+          const scaleDisplay = getMajorScaleDisplay();
+          if (!scaleDisplay) return null;
+          
+          return (
+            <div className="mt-4 p-4 bg-white rounded-lg border border-neutral-200">
+              <h4 className="font-semibold text-neutral-900 mb-3">Major Scale (Circle of Fifths Order)</h4>
+              <div className="flex items-center justify-center space-x-4">
+                <div className="text-center">
+                  <div className="text-xs text-neutral-500 mb-1">Notes</div>
+                  <div className="flex space-x-3">
+                    {scaleDisplay.notes.map((note, index) => (
+                      <div key={index} className="flex flex-col items-center">
+                        <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold mb-1">
+                          {note}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center mt-2">
+                <div className="flex space-x-3">
+                  {scaleDisplay.degrees.map((degree, index) => (
+                    <div key={index} className="w-8 text-center text-sm font-semibold text-neutral-600">
+                      {degree}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

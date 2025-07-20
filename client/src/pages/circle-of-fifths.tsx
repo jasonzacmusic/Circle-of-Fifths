@@ -54,17 +54,22 @@ export default function CircleOfFifthsPage() {
     const { currentMode, selectedNotes } = state;
     
     if (selectedNotes.includes(note)) {
+      // Deselect the note
       updateState({
         selectedNotes: selectedNotes.filter(n => n !== note)
       });
     } else {
       let newSelection = [...selectedNotes];
       
-      if (currentMode === 'intervals' && selectedNotes.length >= 2) {
+      // Mode-specific selection limits
+      if (currentMode === 'scales') {
+        newSelection = [note]; // Only one note allowed for scales mode
+      } else if (currentMode === 'intervals' && selectedNotes.length >= 2) {
         return; // Max 2 notes for intervals
+      } else {
+        newSelection.push(note);
       }
       
-      newSelection.push(note);
       updateState({ selectedNotes: newSelection });
     }
   };
