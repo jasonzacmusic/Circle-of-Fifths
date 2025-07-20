@@ -130,10 +130,50 @@ export default function ScaleVisualizer({ selectedNotes, currentMode, scaleType 
   };
 
   const drawRemainingNotesArc = (svg: SVGSVGElement, rootIndex: number) => {
-    // For Bb major scale, the remaining scale notes are: C G D A
-    // These correspond to indices 0, 1, 2, 3 in the circle
-    const scaleNotes = ['C', 'G', 'D', 'A']; // Major scale notes excluding root and its neighbors
-    const remainingIndices = scaleNotes.map(note => CIRCLE_NOTES.indexOf(note)).filter(index => index !== -1);
+    const rootNote = CIRCLE_NOTES[rootIndex];
+    
+    // Calculate the major scale notes for the selected root
+    // Major scale intervals: W-W-H-W-W-W-H (2-2-1-2-2-2-1 semitones)
+    const majorScaleIntervals = [0, 2, 4, 5, 7, 9, 11]; // Root, 2nd, 3rd, 4th, 5th, 6th, 7th
+    
+    // Convert root note to chromatic index
+    const chromaticNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const enharmonicMap: { [key: string]: string } = {
+      'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#'
+    };
+    
+    const normalizedRoot = enharmonicMap[rootNote] || rootNote;
+    const rootChromaticIndex = chromaticNotes.indexOf(normalizedRoot);
+    
+    // Get all major scale notes
+    const scaleNotes = majorScaleIntervals.map(interval => {
+      const chromaticIndex = (rootChromaticIndex + interval) % 12;
+      return chromaticNotes[chromaticIndex];
+    });
+    
+    // Get the neighbors in circle of fifths
+    const prevIndex = (rootIndex - 1 + CIRCLE_NOTES.length) % CIRCLE_NOTES.length;
+    const nextIndex = (rootIndex + 1) % CIRCLE_NOTES.length;
+    const neighbors = [CIRCLE_NOTES[prevIndex], rootNote, CIRCLE_NOTES[nextIndex]];
+    
+    // Find remaining scale notes (excluding root and its circle-of-fifths neighbors)
+    const remainingScaleNotes = scaleNotes.filter(note => !neighbors.includes(note));
+    
+    // Map back to circle indices, handling enharmonics
+    const remainingIndices = remainingScaleNotes.map(note => {
+      let index = CIRCLE_NOTES.indexOf(note);
+      if (index === -1) {
+        // Try enharmonic equivalent
+        const reverseMap: { [key: string]: string } = {
+          'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb'
+        };
+        const enharmonic = reverseMap[note];
+        if (enharmonic) {
+          index = CIRCLE_NOTES.indexOf(enharmonic);
+        }
+      }
+      return index;
+    }).filter(index => index !== -1);
     
     if (remainingIndices.length === 0) return;
 
