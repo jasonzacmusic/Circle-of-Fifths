@@ -10,13 +10,7 @@ export class AudioEngine {
     this.volume = new Tone.Volume(-12);
     this.synth = new Tone.PolySynth(Tone.Synth, {
       oscillator: {
-        type: "triangle",
-        harmonicity: 0.5,
-        modulationType: "sine",
-        modulationIndex: 3,
-        modulation: {
-          type: "triangle"
-        }
+        type: "triangle"
       },
       envelope: {
         attack: 0.02,

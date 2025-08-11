@@ -8,6 +8,8 @@ interface ControlPanelProps {
   isPlaying: boolean;
   togglePlayback: () => void;
   stopPlayback: () => void;
+  isAudioInitialized: boolean;
+  audioError: string | null;
 }
 
 export default function ControlPanel({
@@ -17,7 +19,9 @@ export default function ControlPanel({
   clearSelection,
   isPlaying,
   togglePlayback,
-  stopPlayback
+  stopPlayback,
+  isAudioInitialized,
+  audioError
 }: ControlPanelProps) {
   const { currentMode, scaleType, playbackDirection, intervalType, activeShape, volume, tempo } = state;
 
@@ -57,6 +61,18 @@ export default function ControlPanel({
 
   return (
     <div className="space-y-6">
+      
+      {/* Audio Status Indicator */}
+      {!isAudioInitialized && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+            <span className="text-sm text-amber-800">
+              {audioError ? audioError : "Click any button to enable audio playback"}
+            </span>
+          </div>
+        </div>
+      )}
       
       {/* Scale Settings (Scales Mode) */}
       {currentMode === 'scales' && (

@@ -35,7 +35,7 @@ export default function CircleOfFifthsPage() {
   });
 
   const [showHelp, setShowHelp] = useState(false);
-  const { isPlaying, togglePlayback, stopPlayback } = useAudio();
+  const { isPlaying, togglePlayback, stopPlayback, isInitialized, error } = useAudio();
 
   const updateState = (updates: Partial<AppState>) => {
     setState(prev => ({ ...prev, ...updates }));
@@ -132,6 +132,8 @@ export default function CircleOfFifthsPage() {
               isPlaying={isPlaying}
               togglePlayback={togglePlayback}
               stopPlayback={stopPlayback}
+              isAudioInitialized={isInitialized}
+              audioError={error}
             />
           </div>
 
